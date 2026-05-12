@@ -1,0 +1,23 @@
+import axios from 'axios';
+
+/**
+ * Instancia centralizada de Axios para realizar peticiones a la API .NET.
+ * Se configura con la URL base definida en el archivo .env.
+ */
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Interceptor para inyectar el token JWT automáticamente
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export default api;
