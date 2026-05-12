@@ -8,7 +8,7 @@ import type { User, AuthResponse } from '../types';
  */
 interface AuthContextType {
   user: User | null;
-  loginWithGoogle: () => void; // Camino "Ninja" vía Auth0.
+  loginWithGoogle: () => void; // Camino vía Auth0.
   login: (email: string, pass: string) => Promise<void>; // Camino "Tradicional" directo al backend.
   logout: () => void;
   loading: boolean;
@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [isAuthenticated, isAuth0Loading, getAccessTokenSilently]);
 
   /**
-   * MÉTODO NINJA: Salta directo a Google.
+   * MÉTODO Auth0: Salta directo a Google.
    */
   const loginWithGoogle = () => {
     console.log("Redirigiendo directamente a Google...");
@@ -82,7 +82,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   /**
-   * MÉTODO TRADICIONAL: Login directo con tu Backend .NET.
+   * MÉTODO TRADICIONAL: Login directo con el Backend .NET.
    */
   const login = async (email: string, password: string) => {
     try {
