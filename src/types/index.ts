@@ -16,11 +16,29 @@ export interface AuthResponse {
   usuario: User;
 }
 
-export interface Sitio {
-  id: number;
+export interface LoginCredentials {
+  email: string;
+  password?: string;
+}
+
+export interface RegisterCredentials {
   nombre: string;
-  descripcion?: string;
+  email: string;
+  password: string;
+  sitioId: number;
+}
+
+export interface Sitio {
+  nombre: string;
+  slug: string;
+  tipoRegistro: TipoRegistro;
   logoUrl?: string;
   colorPrincipal?: string;
-  tipoRegistro: string;
+}
+
+export enum TipoRegistro {
+  Abierta = 0,
+  AbiertaConAutorizacion = 1,
+  SoloConInvitacion = 2,
+  Cerrada = 3
 }

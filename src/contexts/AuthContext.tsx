@@ -1,15 +1,13 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import api from '../api/api';
-import type { User, AuthResponse } from '../types';
+import { authService } from '../api/authService';
+import type { User, AuthResponse, LoginCredentials, RegisterCredentials } from '../types/index';
 
-/**
- * Interfaz extendida para soportar ambos métodos de autenticación.
- */
 interface AuthContextType {
   user: User | null;
-  loginWithGoogle: () => void; // Camino vía Auth0.
-  login: (email: string, pass: string) => Promise<void>; // Camino "Tradicional" directo al backend.
+  loginWithGoogle: () => void;
+  login: (credentials: LoginCredentials, slug?: string) => Promise<void>;
+  register: (credentials: RegisterCredentials, slug?: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
 }
@@ -29,84 +27,85 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   /**
-   * PERSISTENCIA LOCAL: Rehidratar sesión al cargar la página.
+   * Helper para persistir la sesión localmente.
    */
+  const handleAuthSuccess = useCallback((authData: AuthResponse) => {
+    localStorage.setItem('authToken', authData.jwt);
+    localStorage.setItem('user', JSON.stringify(authData.usuario));
+    setUser(authData.usuario);
+  }, []);
+
+  /**
+   * Helper para limpiar la sesión local.
+   */
+  const clearLocalAuth = useCallback(() => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    setUser(null);
+  }, []);
+
+  // Rehidratar sesión al cargar
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     const token = localStorage.getItem('authToken');
     if (savedUser && token) {
       setUser(JSON.parse(savedUser));
     }
-    // No quitamos el loading aquí si Auth0 está cargando, para evitar parpadeos.
   }, []);
 
-  /**
-   * SINCRONIZACIÓN GOOGLE: Solo se dispara si Auth0 detecta sesión.
-   */
+  // Sincronización con Auth0/Google
   useEffect(() => {
-    const syncWithBackend = async () => {
+    const sync = async () => {
       if (isAuthenticated) {
         try {
           const token = await getAccessTokenSilently();
-          const response = await api.post<AuthResponse>('/auth/google', { 
-            Auth0Token: token,
-            SitioId: 1 
-          });
+          
+          // Se intenta extraer el slug de la URL (asumiendo formato /:slug/...)
+          const pathParts = window.location.pathname.split('/');
+          const slug = pathParts[1] !== 'login' && pathParts[1] !== 'register' && pathParts[1] !== '' ? pathParts[1] : undefined;
 
-          const { jwt, usuario } = response.data;
-          localStorage.setItem('authToken', jwt);
-          localStorage.setItem('user', JSON.stringify(usuario));
-          setUser(usuario);
+          const authData = await authService.syncGoogleUser(token, 1, slug);
+          handleAuthSuccess(authData);
         } catch (error) {
-          console.error("Error sincronizando Google con el backend:", error);
+          console.error("Error sincronizando con Google:", error);
         }
       }
       setLoading(false);
     };
 
     if (!isAuth0Loading) {
-      syncWithBackend();
+      sync();
     }
-  }, [isAuthenticated, isAuth0Loading, getAccessTokenSilently]);
+  }, [isAuthenticated, isAuth0Loading, getAccessTokenSilently, handleAuthSuccess]);
 
-  /**
-   * MÉTODO Auth0: Salta directo a Google.
-   */
   const loginWithGoogle = () => {
-    console.log("Redirigiendo directamente a Google...");
     loginWithRedirect({
-      authorizationParams: {
-        connection: 'google-oauth2' 
-      }
+      authorizationParams: { connection: 'google-oauth2' }
     });
   };
 
-  /**
-   * MÉTODO TRADICIONAL: Login directo con el Backend .NET.
-   */
-  const login = async (email: string, password: string) => {
+  const login = async (credentials: LoginCredentials, slug?: string) => {
     try {
-      const response = await api.post<AuthResponse>('/auth/login', { email, password });
-      const { jwt, usuario } = response.data;
-
-      localStorage.setItem('authToken', jwt);
-      localStorage.setItem('user', JSON.stringify(usuario));
-      setUser(usuario);
+      const authData = await authService.login({ ...credentials, slug });
+      handleAuthSuccess(authData);
     } catch (error) {
-      console.error("Error en login tradicional:", error);
+      console.error("Error en login:", error);
       throw error;
     }
   };
 
-  /**
-   * LOGOUT HÍBRIDO: Limpia local y también avisa a Auth0 por si acaso.
-   */
+  const register = async (credentials: RegisterCredentials, slug?: string) => {
+    try {
+      const authData = await authService.register({ ...credentials, slug });
+      handleAuthSuccess(authData);
+    } catch (error) {
+      console.error("Error en registro:", error);
+      throw error;
+    }
+  };
+
   const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    setUser(null);
-    
-    // Si el usuario estaba con Auth0, cerramos sesión allá también.
+    clearLocalAuth();
     if (isAuthenticated) {
       logoutAuth0({ logoutParams: { returnTo: window.location.origin } });
     }
@@ -117,6 +116,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       user, 
       loginWithGoogle, 
       login, 
+      register,
       logout, 
       loading: loading || isAuth0Loading 
     }}>
