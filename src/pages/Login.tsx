@@ -124,7 +124,7 @@ const Login: React.FC = () => {
 
           {/* Botón Google */}
           <button 
-            onClick={loginWithGoogle}
+            onClick={() => loginWithGoogle(slug)}
             style={{
               width: '100%',
               padding: '10px',

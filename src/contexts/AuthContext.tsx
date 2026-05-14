@@ -5,7 +5,7 @@ import type { User, AuthResponse, LoginCredentials, RegisterCredentials } from '
 
 interface AuthContextType {
   user: User | null;
-  loginWithGoogle: () => void;
+  loginWithGoogle: (slug?: string) => void;
   login: (credentials: LoginCredentials, slug?: string) => Promise<void>;
   register: (credentials: RegisterCredentials, slug?: string) => Promise<void>;
   logout: () => void;
@@ -78,8 +78,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [isAuthenticated, isAuth0Loading, getAccessTokenSilently, handleAuthSuccess]);
 
-  const loginWithGoogle = () => {
+  const loginWithGoogle = (slug?: string) => {
     loginWithRedirect({
+      appState: { 
+        returnTo: slug ? `/${slug}` : window.location.pathname 
+      },
       authorizationParams: { connection: 'google-oauth2' }
     });
   };
@@ -105,9 +108,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = () => {
+    // Capturamos el slug antes de limpiar para persistirlo
+    const pathParts = window.location.pathname.split('/');
+    const currentSlug = pathParts[1] !== 'login' && pathParts[1] !== 'register' && pathParts[1] !== '' ? pathParts[1] : null;
+    console.log('currentSlug', currentSlug);
+    if (currentSlug) {
+      localStorage.setItem('lastSlug', currentSlug);
+    }
+
     clearLocalAuth();
+
+    // Auth0 requiere que returnTo esté registrada en su panel.
+    // Generalmente solo registramos el origin (ej: http://localhost:5173), no podemos tampoco registrar cada slug porque pueden ser infinitos.
+    // Si intentamos mandar a /slug/login y no está registrada, tira el error Auth0.
+    // Entonces se manda a la raíz y se gestiona la redirección al sitio nuevamente fuera de esto.
     if (isAuthenticated) {
-      logoutAuth0({ logoutParams: { returnTo: window.location.origin } });
+      logoutAuth0({ 
+        logoutParams: { 
+          returnTo: window.location.origin 
+        } 
+      });
     }
   };
 
