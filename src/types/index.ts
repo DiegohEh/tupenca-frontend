@@ -9,6 +9,7 @@ export interface User {
   email: string;
   sitioId: number;
   rol: number;
+  tienePassword: boolean;
 }
 
 export interface AuthResponse {

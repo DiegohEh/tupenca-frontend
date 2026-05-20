@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
-import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams, useNavigate, Link } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
 import { useAuth } from './contexts/AuthContext';
 import SlugGuard from './components/SlugGuard';
 import './App.css';
@@ -92,11 +93,18 @@ function App() {
                 element={!user ? <Register /> : <SlugRedirect />} 
               />
               <Route 
+                path="profile" 
+                element={user ? <Profile /> : <Navigate to="../login" />} 
+              />
+              <Route 
                 path="" 
                 element={user ? (
                   <div style={{ textAlign: 'center', marginTop: '50px' }}>
                     <h1>Bienvenido a la Plataforma de Pencas</h1>
                     <p>Hola, {user.nombre}. Ya estás autenticado en el sitio.</p>
+                    <Link to="profile" style={{ display: 'inline-block', marginBottom: '20px', color: '#007bff' }}>
+                      Ir a mi perfil
+                    </Link>
                     <Login /> {/* Reutilizamos Login para mostrar el botón de cerrar sesión */}
                   </div>
                 ) : (
