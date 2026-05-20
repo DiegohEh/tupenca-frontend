@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Pencas from './pages/Pencas';
+import Partidos from './pages/Partidos';
 import { useAuth } from './contexts/AuthContext';
 import SlugGuard from './components/SlugGuard';
 import './App.css';
@@ -90,6 +92,14 @@ function App() {
               <Route 
                 path="register" 
                 element={!user ? <Register /> : <SlugRedirect />} 
+              />
+              <Route 
+                path="pencas" 
+                element={user ? <Pencas /> : <Navigate to="login" />} 
+              />
+              <Route 
+                path="partidos/:idParticipacion/:idPenca" 
+                element={user ? <Partidos /> : <Navigate to="login" />} 
               />
               <Route 
                 path="" 
