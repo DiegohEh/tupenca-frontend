@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { userService } from '../api/userService';
 import { useSite } from '../contexts/SiteContext';
+import { invitacionService } from '../api/invitacionService';
+import { TipoRegistro } from '../types/index';
 
 /**
  * Página de Perfil de Usuario.
  * Permite visualizar la información básica del usuario y gestionar su seguridad (contraseña).
  */
 const Profile: React.FC = () => {
+  const { slug } = useParams<{ slug: string }>();
   const { user, updateLocalUser } = useAuth();
   const navigate = useNavigate();
-  const { siteConfig } = useSite();
+  const { site } = useSite();
   
   // Estados para el formulario de contraseña
   const [oldPassword, setOldPassword] = useState('');
@@ -22,8 +25,13 @@ const Profile: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
+  // Estados para el enlace de invitación
+  const [invitationLink, setInvitationLink] = useState<string | null>(null);
+  const [loadingInvitation, setLoadingInvitation] = useState(false);
+
   if (!user) return null;
 
+  // Para la actualización de contraseña.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage(null);
@@ -43,7 +51,7 @@ const Profile: React.FC = () => {
     try {
       // Llamamos al servicio que creamos anteriormente.
       // Si el usuario no tiene password (viene de Google), mandamos null en oldPassword.
-      await userService.updatePassword(user.tienePassword ? oldPassword : null, newPassword);
+      await userService.updatePassword(slug, user.tienePassword ? oldPassword : null, newPassword);
       
       setMessage({ type: 'success', text: 'Contraseña actualizada correctamente.' });
       updateLocalUser({tienePassword: true}); // Se asegura de que el usuario logueado tenga indicado que ahora sí tiene password (en caso de que previamente no hubiese tenido).
@@ -60,6 +68,25 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleGenerateInvitation = async () => {
+    if (!site || !user) return;
+    setLoadingInvitation(true);
+    try {
+      const response = await invitacionService.generar(slug!);
+      const link = `${window.location.origin}/${site.slug}/register?code=${response.token}`;
+      setInvitationLink(link);
+      navigator.clipboard.writeText(link);
+      setMessage({ type: 'success', text: 'Enlace de invitación generado y copiado al portapapeles.' });
+    } catch (error: any) {
+      setMessage({ 
+        type: 'error', 
+        text: error.response?.data?.mensaje || 'Error al generar la invitación.' 
+      });
+    } finally {
+      setLoadingInvitation(false);
+    }
+  };
+
   return (
     <div className="profile-container" style={{ maxWidth: '500px', margin: '40px auto', padding: '20px' }}>
       
@@ -68,7 +95,7 @@ const Profile: React.FC = () => {
         style={{ 
           background: 'transparent', 
           border: 'none', 
-          color: siteConfig?.colorPrincipal || '#007bff', 
+          color: site?.colorPrincipal || '#007bff', 
           cursor: 'pointer', 
           marginBottom: '20px',
           fontSize: '1rem',
@@ -80,7 +107,7 @@ const Profile: React.FC = () => {
         ← Volver
       </button>
       
-      <h2 style={{ borderBottom: `2px solid ${siteConfig?.colorPrincipal || '#007bff'}`, paddingBottom: '10px' }}>
+      <h2 style={{ borderBottom: `2px solid ${site?.colorPrincipal || '#007bff'}`, paddingBottom: '10px' }}>
         Mi Perfil
       </h2>
 
@@ -89,6 +116,38 @@ const Profile: React.FC = () => {
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Método de acceso:</strong> {user.tienePassword ? 'Email/Password' : 'Google (Auth0)'}</p>
       </div>
+
+      {site?.tipoRegistro === TipoRegistro.SoloConInvitacion && (
+        <div className="invitation-section" style={{ marginBottom: '30px', padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
+          <h3>Invitar Usuarios</h3>
+          <p style={{ fontSize: '0.9rem', color: '#666' }}>
+            Este sitio es solo por invitación. Genera un enlace para que otros puedan registrarse.
+          </p>
+          <button 
+            onClick={handleGenerateInvitation}
+            disabled={loadingInvitation}
+            style={{ 
+              padding: '10px', 
+              backgroundColor: site?.colorPrincipal || '#007bff', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '4px',
+              cursor: loadingInvitation ? 'not-allowed' : 'pointer',
+              fontWeight: 'bold',
+              marginTop: '10px'
+            }}
+          >
+            {loadingInvitation ? 'Generando...' : 'Generar y Copiar Enlace'}
+          </button>
+          
+          {invitationLink && (
+            <div style={{ marginTop: '15px', padding: '10px', backgroundColor: '#f1f1f1', borderRadius: '4px', wordBreak: 'break-all' }}>
+              <strong>Enlace:</strong> <br/>
+              <a href={invitationLink} target="_blank" rel="noopener noreferrer">{invitationLink}</a>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="password-section">
         <h3>Seguridad</h3>
@@ -151,7 +210,7 @@ const Profile: React.FC = () => {
             disabled={loading}
             style={{ 
               padding: '10px', 
-              backgroundColor: siteConfig?.colorPrincipal || '#007bff', 
+              backgroundColor: site?.colorPrincipal || '#007bff', 
               color: 'white', 
               border: 'none', 
               borderRadius: '4px',

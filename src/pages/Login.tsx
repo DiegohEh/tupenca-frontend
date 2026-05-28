@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSite } from '../contexts/SiteContext';
+import { useAuth0 } from '@auth0/auth0-react';
 import { Link, useParams } from 'react-router-dom';
 import { TipoRegistro } from '../types';
 
@@ -9,6 +10,7 @@ import { TipoRegistro } from '../types';
  */
 const Login: React.FC = () => {
   const { loginWithGoogle, user, login, logout, loading: authLoading } = useAuth();
+  const { isAuthenticated } = useAuth0();
   const { site } = useSite();
   const { slug } = useParams<{ slug: string }>();
   
@@ -16,6 +18,22 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loadingLocal, setLoadingLocal] = useState(false);
+
+  useEffect(() => {
+    // Si isAuthenticated es true, estamos en la Llegada 1 (Auth0 nos reconoció, pero nuestro Backend aún no nos validó ni nos pateó).
+    // Si intentamos mostrar el error ahora, se borraría antes del redirect.
+    if (isAuthenticated) return;
+
+    // Si isAuthenticated es false, estamos en la Llegada 2 (volvimos del logout de Auth0 limpios).
+    const savedError = sessionStorage.getItem('google_auth_error');
+    if (savedError) {
+      setError(savedError);
+      // Borramos con 100ms de retraso para sobrevivir al doble montaje del StrictMode de React 18
+      setTimeout(() => {
+        sessionStorage.removeItem('google_auth_error');
+      }, 100);
+    }
+  }, [isAuthenticated]);
 
   const handleLocalLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,8 +56,8 @@ const Login: React.FC = () => {
     );
   }
 
-  // Determinamos si el registro está permitido en este sitio
-  const registroPermitido = site && site.tipoRegistro !== TipoRegistro.Cerrada;
+  // En login no mostramos el link de registro si está cerrado o si es solo con invitación
+  const mostrarLinkRegistro = site && site.tipoRegistro !== TipoRegistro.Cerrada && site.tipoRegistro !== TipoRegistro.SoloConInvitacion;
 
   return (
     <div style={{ 
@@ -149,9 +167,20 @@ const Login: React.FC = () => {
             </svg>
           </button>
 
-          {registroPermitido ? (
-            <p style={{ marginTop: '20px', fontSize: '14px' }}>
-              ¿No tienes cuenta? <Link to={`/${slug}/register`} style={{ color: '#4285F4', textDecoration: 'none' }}>Regístrate</Link>
+          {mostrarLinkRegistro ? (
+            <> 
+              <p style={{ marginTop: '20px', fontSize: '14px' }}>
+                ¿No tienes cuenta? <Link to={`/${slug}/register`} style={{ color: '#4285F4', textDecoration: 'none' }}>Regístrate</Link>
+              </p>
+              {site?.tipoRegistro === TipoRegistro.AbiertaConAutorizacion && (
+                <p style={{ fontSize: '13px', color: '#888' }}>
+                  El registro en este sitio quedará pendiente de aprobación.
+                </p>
+              )}
+            </>
+          ) : site?.tipoRegistro === TipoRegistro.SoloConInvitacion ? (
+            <p style={{ marginTop: '20px', fontSize: '14px', color: '#888' }}>
+              Este sitio es solo con invitación.
             </p>
           ) : (
             <p style={{ marginTop: '20px', fontSize: '14px', color: '#888' }}>

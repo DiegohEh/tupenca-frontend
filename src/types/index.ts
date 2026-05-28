@@ -27,6 +27,7 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   sitioId: number;
+  tokenInvitacion?: string;
 }
 
 export interface Sitio {
