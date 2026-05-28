@@ -11,9 +11,14 @@ const api = axios.create({
   },
 });
 
-// Interceptor para inyectar el token JWT automáticamente
+// Interceptor para inyectar el token JWT automáticamente basado en el slug actual
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken');
+  const pathParts = window.location.pathname.split('/');
+  const currentSlug = pathParts[1] !== 'login' && pathParts[1] !== 'register' && pathParts[1] !== '' ? pathParts[1] : null;
+  
+  const tokenKey = currentSlug ? `authToken_${currentSlug}` : 'authToken';
+  const token = localStorage.getItem(tokenKey);
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
