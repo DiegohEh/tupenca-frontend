@@ -44,13 +44,14 @@ const Register: React.FC = () => {
   // Si es solo con invitación y el código no es válido (o falta)
   if (site && site.tipoRegistro === TipoRegistro.SoloConInvitacion && isCodeValid === false) {
     return (
-      <div style={{ textAlign: 'center', marginTop: '50px', fontFamily: 'Arial, sans-serif' }}>
+      <div className="container-simple text-center">
         <h2>Este sitio es solo con invitación.</h2>
-        <p>El enlace utilizado no es válido, ha expirado o ya no tiene usos disponibles.</p>
-        <br />
-        <Link to={`/${slug}/login`} style={{ color: site?.colorPrincipal || '#4285F4', textDecoration: 'none', fontWeight: 'bold' }}>
-          Volver al Inicio de Sesión
-        </Link>
+        <p className="text-muted mt-4">El enlace utilizado no es válido, ha expirado o ya no tiene usos disponibles.</p>
+        <div className="mt-4">
+          <Link to={`/${slug}/login`} className="btn-secondary">
+            Volver al Inicio de Sesión
+          </Link>
+        </div>
       </div>
     );
   }
@@ -58,7 +59,7 @@ const Register: React.FC = () => {
   // Mientras se valida el código, mostramos loading
   if (site && site.tipoRegistro === TipoRegistro.SoloConInvitacion && isCodeValid === null) {
     return (
-      <div style={{ textAlign: 'center', marginTop: '50px', fontFamily: 'Arial, sans-serif' }}>
+      <div className="text-center mt-4">
         <p>Validando invitación...</p>
       </div>
     );
@@ -92,72 +93,60 @@ const Register: React.FC = () => {
 
   if (successMessage) {
     return (
-      <div style={{ 
-        display: 'flex', flexDirection: 'column', alignItems: 'center', 
-        justifyContent: 'center', height: '80vh', fontFamily: 'Arial, sans-serif', textAlign: 'center', padding: '20px'
-      }}>
+      <div className="container-simple text-center">
         <h2>¡Solicitud enviada!</h2>
-        <div style={{ padding: '20px', backgroundColor: '#d4edda', color: '#155724', borderRadius: '8px', maxWidth: '400px', marginTop: '10px' }}>
+        <div style={{ padding: '20px', backgroundColor: '#d4edda', color: '#155724', borderRadius: '8px', marginTop: '15px', marginBottom: '20px' }}>
           {successMessage}
         </div>
-        <p style={{ marginTop: '20px' }}>
-          <Link to={`/${slug}/login`} style={{ color: site?.colorPrincipal || '#4285F4', textDecoration: 'none', fontWeight: 'bold' }}>
-            Volver al Inicio de Sesión
-          </Link>
-        </p>
+        <Link to={`/${slug}/login`} className="btn-secondary">
+          Volver al Inicio de Sesión
+        </Link>
       </div>
     );
   }
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      height: '80vh',
-      fontFamily: 'Arial, sans-serif'
-    }}>
+    <div className="container-simple text-center">
       <h1>Crear Cuenta en {site?.nombre || slug}</h1>
-      <p>Regístrate para empezar a jugar</p>
+      <p className="text-muted mb-4">Regístrate para empezar a jugar</p>
 
       {(site?.tipoRegistro === TipoRegistro.AbiertaConAutorizacion || site?.tipoRegistro === TipoRegistro.SoloConInvitacion) && (
-        <div style={{ padding: '10px', backgroundColor: '#fff3cd', color: '#856404', borderRadius: '5px', width: '300px', textAlign: 'center', fontSize: '0.9rem', marginTop: '10px' }}>
-          <strong>Atención:</strong> Tu registro quedará pendiente de aprobación por el administrador del sitio.
+        <div style={{ padding: '10px', backgroundColor: '#fff3cd', color: '#856404', borderRadius: '6px', fontSize: '0.9rem', marginBottom: '15px' }}>
+          <strong>Atención:</strong> Tu registro quedará pendiente de aprobación.
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '15px',
-        width: '300px',
-        marginTop: '20px'
-      }}>
-        <input
-          type="text"
-          placeholder="Nombre completo"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          required
-          style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
-        />
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
-        />
+      <form onSubmit={handleSubmit} style={{ textAlign: 'left' }}>
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Nombre completo"
+            className="form-input"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="email"
+            placeholder="Correo electrónico"
+            className="form-input"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="password"
+            placeholder="Contraseña"
+            className="form-input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
 
         {site?.tipoRegistro === TipoRegistro.SoloConInvitacion && (
           <input
@@ -167,27 +156,19 @@ const Register: React.FC = () => {
           />
         )}
         
-        {error && <p style={{ color: 'red', fontSize: '14px', margin: 0 }}>{error}</p>}
+        {error && <p style={{ color: 'red', fontSize: '14px', marginTop: '-10px', marginBottom: '10px' }}>{error}</p>}
 
         <button 
           type="submit" 
+          className="btn-primary"
           disabled={loading}
-          style={{
-            padding: '10px',
-            backgroundColor: site?.colorPrincipal || '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            fontSize: '16px'
-          }}
         >
           {loading ? 'Registrando...' : 'Registrarse'}
         </button>
       </form>
 
-      <p style={{ marginTop: '20px' }}>
-        ¿Ya tienes cuenta? <Link to={`/${slug}/login`} style={{ color: '#4285F4', textDecoration: 'none' }}>Inicia sesión</Link>
+      <p className="mt-4">
+        ¿Ya tienes cuenta? <Link to={`/${slug}/login`} style={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>Inicia sesión</Link>
       </p>
     </div>
   );
