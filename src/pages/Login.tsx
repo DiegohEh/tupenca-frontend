@@ -60,104 +60,65 @@ const Login: React.FC = () => {
   const mostrarLinkRegistro = site && site.tipoRegistro !== TipoRegistro.Cerrada && site.tipoRegistro !== TipoRegistro.SoloConInvitacion;
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      height: '80vh',
-      fontFamily: 'Arial, sans-serif'
-    }}>
-      <h1>{site?.nombre || 'tupenca.uy'}</h1>
-      {site?.logoUrl && <img src={site.logoUrl} alt="Logo" style={{ maxWidth: '100px', marginBottom: '20px' }} />}
+    <div className="container-simple text-center">
+      <h1 style={{ marginBottom: '5px' }}>{site?.nombre || 'tupenca.uy'}</h1>
+      {site?.logoUrl && <img src={site.logoUrl} alt="Logo" style={{ maxWidth: '80px', marginBottom: '20px' }} />}
       
       {user ? (
-        <div style={{ textAlign: 'center' }}>
-          <p>Bienvenido, <strong>{user.nombre}</strong>!</p>
-          <p>Email: {user.email}</p>
-          <button 
-            onClick={logout}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#f44336',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              marginTop: '20px'
-            }}
-          >
+        <div>
+          <p className="mb-4">Bienvenido, <strong>{user.nombre}</strong>!</p>
+          <p className="text-muted mb-4">Email: {user.email}</p>
+          <button onClick={logout} className="btn-secondary" style={{ color: 'red', borderColor: 'red' }}>
             Cerrar Sesión
           </button>
         </div>
       ) : (
-        <div style={{ textAlign: 'center', width: '300px' }}>
-          <p>Inicia sesión para jugar</p>
+        <div>
+          <p className="text-muted mb-4">Inicia sesión para jugar</p>
           
           {/* Formulario Tradicional */}
-          <form onSubmit={handleLocalLogin} style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            marginBottom: '20px'
-          }}>
-            <input
-              type="email"
-              placeholder="Correo electrónico"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
-            />
-            <input
-              type="password"
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
-            />
-            {error && <p style={{ color: 'red', fontSize: '12px', margin: 0 }}>{error}</p>}
+          <form onSubmit={handleLocalLogin} style={{ textAlign: 'left' }}>
+            <div className="form-group">
+              <input
+                type="email"
+                placeholder="Correo electrónico"
+                className="form-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
+                type="password"
+                placeholder="Contraseña"
+                className="form-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <p style={{ color: 'red', fontSize: '12px', marginTop: '-10px', marginBottom: '10px' }}>{error}</p>}
             <button 
               type="submit" 
+              className="btn-primary"
               disabled={loadingLocal}
-              style={{
-                padding: '10px',
-                backgroundColor: site?.colorPrincipal || '#4CAF50',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: loadingLocal ? 'not-allowed' : 'pointer'
-              }}
             >
               {loadingLocal ? 'Iniciando...' : 'Iniciar Sesión'}
             </button>
           </form>
 
           <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
-            <hr style={{ flex: 1 }} />
+            <hr style={{ flex: 1, borderColor: 'var(--border-color)', borderStyle: 'solid', borderWidth: '1px 0 0 0' }} />
             <span style={{ margin: '0 10px', color: '#888', fontSize: '12px' }}>O</span>
-            <hr style={{ flex: 1 }} />
+            <hr style={{ flex: 1, borderColor: 'var(--border-color)', borderStyle: 'solid', borderWidth: '1px 0 0 0' }} />
           </div>
 
           {/* Botón Google */}
           <button 
             onClick={() => loginWithGoogle(slug)}
-            style={{
-              width: '100%',
-              padding: '10px',
-              backgroundColor: 'rgba(66, 134, 244, 0)',
-              color: '#4285F4',
-              fontWeight: 'bold',
-              border: '1px solid #4285F4',
-              borderRadius: '5px',
-              fontSize: '14px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '10px'
-            }}
+            className="btn-secondary"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', color: '#4285F4', borderColor: '#4285F4' }}
           >
             <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
               <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
@@ -165,25 +126,26 @@ const Login: React.FC = () => {
               <path d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
               <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962l3.007 2.332C4.672 5.164 6.656 3.58 9 3.58z" fill="#EA4335"/>
             </svg>
+            Google
           </button>
 
           {mostrarLinkRegistro ? (
-            <> 
-              <p style={{ marginTop: '20px', fontSize: '14px' }}>
-                ¿No tienes cuenta? <Link to={`/${slug}/register`} style={{ color: '#4285F4', textDecoration: 'none' }}>Regístrate</Link>
+            <div className="mt-4"> 
+              <p style={{ fontSize: '14px' }}>
+                ¿No tienes cuenta? <Link to={`/${slug}/register`} style={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>Regístrate</Link>
               </p>
               {site?.tipoRegistro === TipoRegistro.AbiertaConAutorizacion && (
-                <p style={{ fontSize: '13px', color: '#888' }}>
-                  El registro en este sitio quedará pendiente de aprobación.
+                <p className="text-muted" style={{ fontSize: '12px', marginTop: '5px' }}>
+                  El registro quedará pendiente de aprobación.
                 </p>
               )}
-            </>
+            </div>
           ) : site?.tipoRegistro === TipoRegistro.SoloConInvitacion ? (
-            <p style={{ marginTop: '20px', fontSize: '14px', color: '#888' }}>
+            <p className="text-muted mt-4" style={{ fontSize: '14px' }}>
               Este sitio es solo con invitación.
             </p>
           ) : (
-            <p style={{ marginTop: '20px', fontSize: '14px', color: '#888' }}>
+            <p className="text-muted mt-4" style={{ fontSize: '14px' }}>
               Los registros están cerrados para este sitio.
             </p>
           )}

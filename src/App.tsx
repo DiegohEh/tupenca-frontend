@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate, useParams, useNavigate, Link } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
@@ -14,59 +15,6 @@ import './App.css';
 const SlugRedirect = () => {
   const { slug } = useParams();
   return <Navigate to={`/${slug}`} replace />;
-};
-
-/**
- * Componente temporal para la landing page de demostración.
- * Ahora incluye lógica de redirección inteligente usando useEffect para evitar
- * problemas con el doble renderizado de React 18 (Strict Mode).
- */
-const LandingDemo = () => {
-  const navigate = useNavigate();
-  const lastSlug = localStorage.getItem('lastSlug');
-
-  useEffect(() => {
-    if (lastSlug) {
-      // Limpiamos el slug y redirigimos fuera del renderizado principal
-      localStorage.removeItem('lastSlug');
-      navigate(`/${lastSlug}`, { replace: true });
-    }
-  }, [lastSlug, navigate]);
-
-  // Si estamos redirigiendo, no mostramos nada o un cargando
-  if (lastSlug) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
-        <p>Volviendo al sitio...</p>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '80vh',
-      fontFamily: 'Arial, sans-serif',
-      color: '#333'
-    }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>tupenca.uy</h1>
-      <p style={{ color: '#666', marginBottom: '20px' }}>
-        Plataforma en construcción, estamos preparando la cancha...
-      </p>
-      <div style={{ 
-        padding: '8px 16px', 
-        backgroundColor: '#f0f0f0', 
-        borderRadius: '20px',
-        fontSize: '14px',
-        color: '#555'
-      }}>
-        Próximamente
-      </div>
-    </div>
-  );
 };
 
 function App() {
@@ -117,7 +65,7 @@ function App() {
       />
 
       {/* Redirección por defecto si no hay slug (landing page de demostración) */}
-      <Route path="/" element={<LandingDemo />} />
+      <Route path="/" element={<LandingPage />} />
       
       {/* Fallback para rutas no encontradas */}
       <Route path="*" element={<Navigate to="/" />} />
