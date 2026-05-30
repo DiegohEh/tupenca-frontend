@@ -51,7 +51,7 @@ const Profile: React.FC = () => {
     try {
       // Llamamos al servicio que creamos anteriormente.
       // Si el usuario no tiene password (viene de Google), mandamos null en oldPassword.
-      await userService.updatePassword(slug, user.tienePassword ? oldPassword : null, newPassword);
+      await userService.updatePassword(slug!, user.tienePassword ? oldPassword : null, newPassword);
       
       setMessage({ type: 'success', text: 'Contraseña actualizada correctamente.' });
       updateLocalUser({tienePassword: true}); // Se asegura de que el usuario logueado tenga indicado que ahora sí tiene password (en caso de que previamente no hubiese tenido).

@@ -38,9 +38,11 @@ export interface Sitio {
   colorPrincipal?: string;
 }
 
-export enum TipoRegistro {
-  Abierta = 0,
-  AbiertaConAutorizacion = 1,
-  SoloConInvitacion = 2,
-  Cerrada = 3
-}
+export const TipoRegistro = {
+  Abierta: 0,
+  AbiertaConAutorizacion: 1,
+  SoloConInvitacion: 2,
+  Cerrada: 3
+} as const;
+
+export type TipoRegistro = typeof TipoRegistro[keyof typeof TipoRegistro];

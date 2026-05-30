@@ -15,7 +15,7 @@ const Register: React.FC = () => {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [codigoInvitacion, setCodigoInvitacion] = useState(searchParams.get('code') || '');
+  const [codigoInvitacion] = useState(searchParams.get('code') || '');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
