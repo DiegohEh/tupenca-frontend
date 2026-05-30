@@ -8,6 +8,22 @@ interface SlugGuardProps {
 }
 
 /**
+ * Calcula si el color de texto debe ser blanco o negro dependiendo del color de fondo (luminosidad)
+ */
+const getContrastColor = (hexColor: string) => {
+  if (!hexColor) return '#ffffff';
+  let hex = hexColor.replace('#', '');
+  if (hex.length === 3) {
+    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+  }
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+  return (yiq >= 128) ? '#000000' : '#ffffff';
+};
+
+/**
  * SlugGuard valida si el 'slug' en la URL existe y carga su configuración.
  */
 const SlugGuard: React.FC<SlugGuardProps> = ({ children }) => {
@@ -28,6 +44,15 @@ const SlugGuard: React.FC<SlugGuardProps> = ({ children }) => {
         // Obtenemos la configuración completa del sitio
         const siteData = await authService.validarSlug(slug);
         setSite(siteData); // Guardamos en el contexto global
+        
+        // --- INYECCIÓN DE TEMA DINÁMICO ---
+        const primaryColor = siteData.colorPrincipal || '#222222'; // Gris oscuro elegante por defecto
+        const contrastColor = getContrastColor(primaryColor);
+        
+        document.documentElement.style.setProperty('--primary-color', primaryColor);
+        document.documentElement.style.setProperty('--primary-text-color', contrastColor);
+        // ----------------------------------
+
         setIsValid(true);
       } catch (error) {
         console.error("Slug inválido:", error);

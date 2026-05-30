@@ -88,54 +88,46 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="profile-container" style={{ maxWidth: '500px', margin: '40px auto', padding: '20px' }}>
+    <div className="container-simple">
       
       <button 
         onClick={() => navigate(-1)} 
         style={{ 
           background: 'transparent', 
           border: 'none', 
-          color: site?.colorPrincipal || '#007bff', 
+          color: 'var(--primary-color)', 
           cursor: 'pointer', 
           marginBottom: '20px',
           fontSize: '1rem',
           display: 'flex',
           alignItems: 'center',
-          gap: '5px'
+          gap: '5px',
+          padding: 0
         }}
       >
         ← Volver
       </button>
       
-      <h2 style={{ borderBottom: `2px solid ${site?.colorPrincipal || '#007bff'}`, paddingBottom: '10px' }}>
+      <h2 style={{ borderBottom: `2px solid var(--primary-color)`, paddingBottom: '10px', marginBottom: '20px' }}>
         Mi Perfil
       </h2>
 
-      <div className="user-info" style={{ marginBottom: '30px', backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '8px' }}>
+      <div className="mb-4">
         <p><strong>Nombre:</strong> {user.nombre}</p>
         <p><strong>Email:</strong> {user.email}</p>
         <p><strong>Método de acceso:</strong> {user.tienePassword ? 'Email/Password' : 'Google (Auth0)'}</p>
       </div>
 
       {site?.tipoRegistro === TipoRegistro.SoloConInvitacion && (
-        <div className="invitation-section" style={{ marginBottom: '30px', padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
+        <div style={{ marginBottom: '30px', padding: '20px', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
           <h3>Invitar Usuarios</h3>
-          <p style={{ fontSize: '0.9rem', color: '#666' }}>
+          <p className="text-muted mb-4">
             Este sitio es solo por invitación. Genera un enlace para que otros puedan registrarse.
           </p>
           <button 
             onClick={handleGenerateInvitation}
             disabled={loadingInvitation}
-            style={{ 
-              padding: '10px', 
-              backgroundColor: site?.colorPrincipal || '#007bff', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '4px',
-              cursor: loadingInvitation ? 'not-allowed' : 'pointer',
-              fontWeight: 'bold',
-              marginTop: '10px'
-            }}
+            className="btn-primary"
           >
             {loadingInvitation ? 'Generando...' : 'Generar y Copiar Enlace'}
           </button>
@@ -143,31 +135,30 @@ const Profile: React.FC = () => {
           {invitationLink && (
             <div style={{ marginTop: '15px', padding: '10px', backgroundColor: '#f1f1f1', borderRadius: '4px', wordBreak: 'break-all' }}>
               <strong>Enlace:</strong> <br/>
-              <a href={invitationLink} target="_blank" rel="noopener noreferrer">{invitationLink}</a>
+              <a href={invitationLink} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-color)' }}>{invitationLink}</a>
             </div>
           )}
         </div>
       )}
 
-      <div className="password-section">
+      <div>
         <h3>Seguridad</h3>
-        <p style={{ fontSize: '0.9rem', color: '#666' }}>
+        <p className="text-muted mb-4">
           {user.tienePassword 
             ? 'Cambia tu contraseña actual por una nueva.' 
             : 'Tu cuenta no tiene una contraseña local. Define una para poder ingresar sin usar Google.'}
         </p>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          {/* Solo mostramos la contraseña actual si el usuario ya tiene una seteada */}
+        <form onSubmit={handleSubmit}>
           {user.tienePassword && (
             <div className="form-group">
               <label>Contraseña Actual:</label>
               <input 
                 type="password" 
+                className="form-input"
                 value={oldPassword} 
                 onChange={(e) => setOldPassword(e.target.value)} 
                 required 
-                style={{ width: '100%', padding: '8px', marginTop: '5px' }}
               />
             </div>
           )}
@@ -176,10 +167,10 @@ const Profile: React.FC = () => {
             <label>Nueva Contraseña:</label>
             <input 
               type="password" 
+              className="form-input"
               value={newPassword} 
               onChange={(e) => setNewPassword(e.target.value)} 
               required 
-              style={{ width: '100%', padding: '8px', marginTop: '5px' }}
             />
           </div>
 
@@ -187,17 +178,18 @@ const Profile: React.FC = () => {
             <label>Confirmar Nueva Contraseña:</label>
             <input 
               type="password" 
+              className="form-input"
               value={confirmPassword} 
               onChange={(e) => setConfirmPassword(e.target.value)} 
               required 
-              style={{ width: '100%', padding: '8px', marginTop: '5px' }}
             />
           </div>
 
           {message && (
             <div style={{ 
               padding: '10px', 
-              borderRadius: '4px', 
+              borderRadius: '6px', 
+              marginBottom: '15px',
               backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
               color: message.type === 'success' ? '#155724' : '#721c24'
             }}>
@@ -207,16 +199,8 @@ const Profile: React.FC = () => {
 
           <button 
             type="submit" 
+            className="btn-primary"
             disabled={loading}
-            style={{ 
-              padding: '10px', 
-              backgroundColor: site?.colorPrincipal || '#007bff', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '4px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontWeight: 'bold'
-            }}
           >
             {loading ? 'Procesando...' : 'Actualizar Contraseña'}
           </button>
