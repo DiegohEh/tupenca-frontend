@@ -9,6 +9,7 @@ export interface User {
   email: string;
   sitioId: number;
   rol: number;
+  tienePassword: boolean;
 }
 
 export interface AuthResponse {
@@ -26,6 +27,7 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   sitioId: number;
+  tokenInvitacion?: string;
 }
 
 export interface Sitio {
@@ -36,9 +38,11 @@ export interface Sitio {
   colorPrincipal?: string;
 }
 
-export enum TipoRegistro {
-  Abierta = 0,
-  AbiertaConAutorizacion = 1,
-  SoloConInvitacion = 2,
-  Cerrada = 3
-}
+export const TipoRegistro = {
+  Abierta: 0,
+  AbiertaConAutorizacion: 1,
+  SoloConInvitacion: 2,
+  Cerrada: 3
+} as const;
+
+export type TipoRegistro = typeof TipoRegistro[keyof typeof TipoRegistro];

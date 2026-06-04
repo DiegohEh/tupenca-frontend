@@ -16,7 +16,7 @@ const Pencas = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const data = await authService.getPencas(slug!);
+        const data = await authService.getPencas();
         setPencas(data);
       } catch (err: any) {
         setError(err.response?.data?.mensaje || 'Error cargando pencas');
@@ -25,7 +25,7 @@ const Pencas = () => {
       }
     };
     fetch();
-  }, [slug]);
+  }, []);
 
   if (loading) return <p>Cargando pencas...</p>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;

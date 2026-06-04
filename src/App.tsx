@@ -1,127 +1,61 @@
-import { useEffect } from 'react';
-import { Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Pencas from './pages/Pencas';
 import Partidos from './pages/Partidos';
+import Profile from './pages/Profile';
+import Dashboard from './pages/Dashboard';
+import AdminPencas from './pages/AdminPencas';
+import CheckoutPenca from './pages/CheckoutPenca';
+import AuthenticatedLayout from './components/AuthenticatedLayout';
 import { useAuth } from './contexts/AuthContext';
 import SlugGuard from './components/SlugGuard';
+import AdminLayout from './components/AdminLayout';
 import './App.css';
 
-/**
- * Componente auxiliar para manejar la redirección dinámica.
- * Extrae el 'slug' de la URL actual y redirige a la raíz de ese sitio.
- */
 const SlugRedirect = () => {
   const { slug } = useParams();
   return <Navigate to={`/${slug}`} replace />;
 };
 
-/**
- * Componente temporal para la landing page de demostración.
- * Ahora incluye lógica de redirección inteligente usando useEffect para evitar
- * problemas con el doble renderizado de React 18 (Strict Mode).
- */
-const LandingDemo = () => {
-  const navigate = useNavigate();
-  const lastSlug = localStorage.getItem('lastSlug');
-
-  useEffect(() => {
-    if (lastSlug) {
-      // Limpiamos el slug y redirigimos fuera del renderizado principal
-      localStorage.removeItem('lastSlug');
-      navigate(`/${lastSlug}`, { replace: true });
-    }
-  }, [lastSlug, navigate]);
-
-  // Si estamos redirigiendo, no mostramos nada o un cargando
-  if (lastSlug) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
-        <p>Volviendo al sitio...</p>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '80vh',
-      fontFamily: 'Arial, sans-serif',
-      color: '#333'
-    }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>tupenca.uy</h1>
-      <p style={{ color: '#666', marginBottom: '20px' }}>
-        Plataforma en construcción, estamos preparando la cancha...
-      </p>
-      <div style={{ 
-        padding: '8px 16px', 
-        backgroundColor: '#f0f0f0', 
-        borderRadius: '20px',
-        fontSize: '14px',
-        color: '#555'
-      }}>
-        Próximamente
-      </div>
-    </div>
-  );
+const LoginRedirect = () => {
+  const { slug } = useParams();
+  return <Navigate to={`/${slug}/login`} replace />;
 };
 
 function App() {
   const { user, loading } = useAuth();
 
-  if (loading) {
-    return <div>Cargando...</div>;
-  }
+  if (loading) return <div>Cargando...</div>;
+  console.log(user.rol)
 
   return (
     <Routes>
-      {/* Rutas con Slug del Sitio (Protegidas por SlugGuard) */}
-      <Route 
-        path="/:slug/*" 
-        element={
-          <SlugGuard>
-            <Routes>
-              <Route 
-                path="login" 
-                element={!user ? <Login /> : <SlugRedirect />} 
-              />
-              <Route 
-                path="register" 
-                element={!user ? <Register /> : <SlugRedirect />} 
-              />
-              <Route 
-                path="pencas" 
-                element={user ? <Pencas /> : <Navigate to="login" />} 
-              />
-              <Route 
-                path="partidos/:idParticipacion/:idPenca" 
-                element={user ? <Partidos /> : <Navigate to="login" />} 
-              />
-              <Route 
-                path="" 
-                element={user ? (
-                  <div style={{ textAlign: 'center', marginTop: '50px' }}>
-                    <h1>Bienvenido a la Plataforma de Pencas</h1>
-                    <p>Hola, {user.nombre}. Ya estás autenticado en el sitio.</p>
-                    <Login /> {/* Reutilizamos Login para mostrar el botón de cerrar sesión */}
-                  </div>
-                ) : (
-                  <Navigate to="login" />
-                )} 
-              />
-            </Routes>
-          </SlugGuard>
-        } 
-      />
+      <Route path="/:slug/*" element={
+        <SlugGuard>
+          <Routes>
+            <Route path="login" element={!user ? <Login /> : <SlugRedirect />} />
+            <Route path="register" element={!user ? <Register /> : <SlugRedirect />} />
+            <Route path="pencas" element={user ? <Pencas /> : <Navigate to="login" />} />
+            <Route path="partidos/:idParticipacion" element={user ? <Partidos /> : <Navigate to="login" />} />
 
-      {/* Redirección por defecto si no hay slug (landing page de demostración) */}
-      <Route path="/" element={<LandingDemo />} />
-      
-      {/* Fallback para rutas no encontradas */}
+            {/* Rutas Autenticadas con Layout */}
+            <Route element={user ? <AuthenticatedLayout /> : <LoginRedirect />}>
+              <Route path="" element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="checkout/:pencaInstanciaId" element={<CheckoutPenca />} />
+            </Route>
+
+            <Route element={user ? <AdminLayout /> : <LoginRedirect />}>
+              <Route path="admin/pencas" element={<AdminPencas />} />
+            </Route>
+            
+          </Routes>
+        </SlugGuard>
+      } />
+
+      <Route path="/" element={<LandingPage />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

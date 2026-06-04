@@ -25,10 +25,14 @@ export const authService = {
   /**
    * Sincroniza el usuario autenticado vía Auth0/Google con el backend local.
    */
+/*<<<<<<< HEAD
   syncGoogleUser: async (token: string, sitioId: number = 1, slug?: string) => {
     const response = await api.post<AuthResponse>('/api/auth/google', {
+=======*/
+  syncGoogleUser: async (token: string, slug?: string) => {
+    const response = await api.post<AuthResponse>('/auth/google', {
       Auth0Token: token,
-      SitioId: sitioId,
+      SitioId: 0, // Fallback dummy, el backend priorizará el slug
       Slug: slug
     });
     return response.data;
@@ -45,8 +49,8 @@ export const authService = {
   /**
    * Obtiene todas las pencas de un sitio.
    */
-  getPencas: async (slug: string) => {
-    const response = await api.get(`/api/pencas?slug=${slug}`);
+  getPencas: async () => {
+    const response = await api.get(`/api/pencas`);
     return response.data;
   },
 
@@ -73,6 +77,28 @@ export const authService = {
             sitioId: Number(idSitio) 
       });
     
+    return response.data;
+  },
+
+  /**
+   * Valida si un código de invitación es correcto para el sitio dado
+   */
+  validarInvitacion: async (token: string, slug: string) => {
+    try {
+      const response = await api.get<{ valido: boolean }>(`/invitacion/validar?token=${token}&slug=${slug}`);
+      return response.data.valido;
+    } catch {
+      return false; // Ante cualquier error, asumimos inválido para máxima seguridad
+    }
+  },
+
+  getPencasSistema: async () => {
+  const response = await api.get('/api/pencas/sistema');
+  return response.data;
+  },
+
+  asociarPenca: async (costo: number, pencaId: number) => {
+    const response = await api.post(`/api/sitios/asociarpenca?costo=${costo}&pencaId=${pencaId}`);
     return response.data;
   }
 };
