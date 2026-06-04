@@ -21,7 +21,7 @@ const CheckoutPenca: React.FC = () => {
     );
   }
 
-  const handleCreateOrder = async (data: any, actions: any) => {
+  const handleCreateOrder = async () => {
     try {
       setError('');
       // Llamamos al backend para que él cree la orden de forma segura
@@ -35,7 +35,7 @@ const CheckoutPenca: React.FC = () => {
     }
   };
 
-  const handleApprove = async (data: any, actions: any) => {
+  const handleApprove = async (data: any) => {
     try {
       if (!currentPagoIdRef.current) throw new Error("No se encontró el ID del pago.");
       
