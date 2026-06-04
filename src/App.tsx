@@ -1,8 +1,11 @@
-import { Routes, Route, Navigate, useParams, Link } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import Dashboard from './pages/Dashboard';
+import CheckoutPenca from './pages/CheckoutPenca';
+import AuthenticatedLayout from './components/AuthenticatedLayout';
 import { useAuth } from './contexts/AuthContext';
 import SlugGuard from './components/SlugGuard';
 import './App.css';
@@ -14,6 +17,14 @@ import './App.css';
 const SlugRedirect = () => {
   const { slug } = useParams();
   return <Navigate to={`/${slug}`} replace />;
+};
+
+/**
+ * Componente auxiliar para redirigir al login usando el slug actual.
+ */
+const LoginRedirect = () => {
+  const { slug } = useParams();
+  return <Navigate to={`/${slug}/login`} replace />;
 };
 
 function App() {
@@ -39,25 +50,13 @@ function App() {
                 path="register" 
                 element={!user ? <Register /> : <SlugRedirect />} 
               />
-              <Route 
-                path="profile" 
-                element={user ? <Profile /> : <Navigate to="../login" />} 
-              />
-              <Route 
-                path="" 
-                element={user ? (
-                  <div style={{ textAlign: 'center', marginTop: '50px' }}>
-                    <h1>Bienvenido a la Plataforma de Pencas</h1>
-                    <p>Hola, {user.nombre}. Ya estás autenticado en el sitio.</p>
-                    <Link to="profile" style={{ display: 'inline-block', marginBottom: '20px', color: '#007bff' }}>
-                      Ir a mi perfil
-                    </Link>
-                    <Login /> {/* Reutilizamos Login para mostrar el botón de cerrar sesión */}
-                  </div>
-                ) : (
-                  <Navigate to="login" />
-                )} 
-              />
+              
+              {/* Rutas Autenticadas (Envueltas en el Layout con Navbar) */}
+              <Route element={user ? <AuthenticatedLayout /> : <LoginRedirect />}>
+                <Route path="" element={<Dashboard />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="checkout/:pencaInstanciaId" element={<CheckoutPenca />} />
+              </Route>
             </Routes>
           </SlugGuard>
         } 
