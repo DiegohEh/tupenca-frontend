@@ -9,7 +9,7 @@ import { TipoRegistro } from '../types';
  * Página de Login híbrida: soporta credenciales locales y Google (Auth0).
  */
 const Login: React.FC = () => {
-  const { loginWithGoogle, user, login, logout, loading: authLoading } = useAuth();
+  const { loginWithGoogle, login, loading: authLoading } = useAuth();
   const { isAuthenticated } = useAuth0();
   const { site } = useSite();
   const { slug } = useParams<{ slug: string }>();
