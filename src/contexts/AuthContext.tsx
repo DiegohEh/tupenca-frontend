@@ -40,6 +40,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const handleAuthSuccess = useCallback((authData: AuthResponse, explicitSlug?: string | null) => {
         const targetSlug = explicitSlug !== undefined ? explicitSlug : currentSlug;
         const keySlug = targetSlug ? `_${targetSlug}` : '';
+        
         localStorage.setItem(`authToken${keySlug}`, authData.jwt);
         localStorage.setItem(`user${keySlug}`, JSON.stringify(authData.usuario));
         setUser(authData.usuario);

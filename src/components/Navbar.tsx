@@ -10,16 +10,22 @@ const Navbar: React.FC = () => {
 
   if (!user) return null;
 
+console.log('rol:', user?.rol, typeof user?.rol);
+
   return (
-    <nav style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '10px 20px',
-      backgroundColor: 'var(--card-bg)',
-      borderBottom: '1px solid var(--border-color)',
-      marginBottom: '20px'
-    }}>
+    // Navbar.tsx - agregá position sticky al nav directamente
+      <nav style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px 20px',
+        backgroundColor: 'white',
+        borderBottom: '1px solid var(--border-color)',
+        //marginBottom: '20px',
+        position: 'sticky',  // ← agregá esto
+        top: 0,              // ← y esto
+        zIndex: 100          // ← y esto
+      }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
         <Link to={`/${slug}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'var(--text-color)', fontWeight: 'bold', fontSize: '18px' }}>
           {site?.logoUrl && (
@@ -36,6 +42,12 @@ const Navbar: React.FC = () => {
         <Link to={`/${slug}/profile`} style={{ textDecoration: 'none', color: 'var(--primary-color)' }}>
           Mi Perfil
         </Link>
+
+        {user.rol === 1  && (
+          <Link to={`/${slug}/admin/pencas`} style={{ textDecoration: 'none', color: 'var(--primary-color)' }}>
+            Admin
+          </Link>
+        )}
         <button 
           onClick={logout}
           style={{

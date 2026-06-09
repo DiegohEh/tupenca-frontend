@@ -41,7 +41,7 @@ export const authService = {
     const response = await api.get<Sitio>(`/sitios/validar/${slug}`);
     return response.data;
   },
-
+  
   /**
    * Valida si un código de invitación es correcto para el sitio dado
    */
@@ -53,4 +53,5 @@ export const authService = {
       return false; // Ante cualquier error, asumimos inválido para máxima seguridad
     }
   }
+
 };

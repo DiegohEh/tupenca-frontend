@@ -1,1 +1,4 @@
 /* Los estilos han sido consolidados en index.css para simplificar la arquitectura CSS y usar un tema dinámico unificado. */
+html {
+  scrollbar-gutter: stable;
+}

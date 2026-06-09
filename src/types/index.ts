@@ -8,8 +8,8 @@ export interface User {
   nombre: string;
   email: string;
   sitioId: number;
-  rol: number;
   tienePassword: boolean;
+  rol: number;
 }
 
 export interface AuthResponse {

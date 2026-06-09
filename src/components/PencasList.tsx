@@ -33,9 +33,9 @@ const PencasList: React.FC = () => {
     navigate(`/${slug}/checkout/${pencaInstanciaId}`);
   };
 
-  const handleVerPenca = (pencaInstanciaId: number) => {
+  const handleVerPenca = (participacionId: number) => {
     // Por ahora alertamos, en el futuro irá a la vista de torneo
-    alert(`¡Pronto podrás ver tu penca (ID: ${pencaInstanciaId}) y hacer predicciones!`);
+        navigate(`/${slug}/partidos/${participacionId}`)
   };
 
   if (loading) {
@@ -73,7 +73,7 @@ const PencasList: React.FC = () => {
           <div>
             {p.yaParticipa ? (
               <button 
-                onClick={() => handleVerPenca(p.id)}
+                onClick={() => handleVerPenca(p.idParticipacion)}
                 className="btn-secondary"
                 style={{ borderColor: '#28a745', color: '#28a745', width: '100%' }}
               >
