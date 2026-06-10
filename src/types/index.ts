@@ -10,6 +10,15 @@ export interface User {
   sitioId: number;
   rol: number;
   tienePassword: boolean;
+  tieneGoogle: boolean;
+  avatarUrl?: string;
+}
+
+export interface PreferenciasNotificacionDTO {
+  recibirResultados: boolean;
+  recibirPartidos: boolean;
+  recibirGenerales: boolean;
+  recibirRanking: boolean;
 }
 
 export interface AuthResponse {
