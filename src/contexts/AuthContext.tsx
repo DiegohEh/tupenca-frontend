@@ -63,6 +63,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         
         if (savedUser && token) {
             setUser(JSON.parse(savedUser));
+            
+            // Background fetch para obtener los datos más recientes del usuario
+            if (currentSlug) {
+                authService.fetchMe(currentSlug)
+                    .then(latestUser => {
+                        setUser(latestUser);
+                        localStorage.setItem(`user${keySlug}`, JSON.stringify(latestUser));
+                    })
+                    .catch(err => {
+                        console.error('Error al actualizar el perfil en background', err);
+                        // No deslogueamos por las dudas si fue un error de red temporal
+                    });
+            }
         } else {
             // Si navegamos a un slug donde no tenemos sesión, nos deslogueamos visualmente
             setUser(null);
@@ -75,7 +88,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Para cuando se retorna desde auth0, detectar si el login fue exitoso para sincronizar con backend.
     useEffect(() => {
         const sync = async () => {
-            if (isAuthenticated) {
+            // Si ya tenemos sesión local, no debemos intentar sincronizar (esto pasa cuando venimos del popup de vincular)
+            const keySlug = currentSlug ? `_${currentSlug}` : '';
+            const hasLocalSession = !!localStorage.getItem(`authToken${keySlug}`);
+
+            if (isAuthenticated && !hasLocalSession) {
                 if(syncAttempted.current) return;
                 syncAttempted.current = true;
                 
