@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
 import CheckoutPenca from './pages/CheckoutPenca';
+import PencaDashboard from './pages/PencaDashboard';
 import AuthenticatedLayout from './components/AuthenticatedLayout';
 import { useAuth } from './contexts/AuthContext';
 import SlugGuard from './components/SlugGuard';
@@ -56,6 +57,7 @@ function App() {
                 <Route path="" element={<Dashboard />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="checkout/:pencaInstanciaId" element={<CheckoutPenca />} />
+                <Route path="penca/:pencaInstanciaId" element={<PencaDashboard />} />
               </Route>
             </Routes>
           </SlugGuard>

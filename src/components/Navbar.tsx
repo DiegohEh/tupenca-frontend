@@ -16,14 +16,18 @@ const Navbar: React.FC = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
       padding: '10px 20px',
-      backgroundColor: 'var(--card-bg)',
+      backgroundColor: '#ffffff',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
       borderBottom: '1px solid var(--border-color)',
-      marginBottom: '20px'
+      marginBottom: '20px',
+      position: 'sticky',
+      top: 0,
+      zIndex: 50
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-        <Link to={`/${slug}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'var(--text-color)', fontWeight: 'bold', fontSize: '18px' }}>
+        <Link to={`/${slug}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', color: 'var(--primary-color)', fontWeight: 'bold', fontSize: '20px' }}>
           {site?.logoUrl && (
-            <img src={site.logoUrl} alt="Logo" style={{ height: '30px', objectFit: 'contain' }} />
+            <img src={site.logoUrl} alt="Logo" style={{ height: '25px', objectFit: 'contain' }} />
           )}
           {site?.nombre || 'tupenca.uy'}
         </Link>
