@@ -1,5 +1,5 @@
 import api from './api';
-import type { AuthResponse, LoginCredentials, RegisterCredentials, Sitio } from '../types/index';
+import type { AuthResponse, LoginCredentials, RegisterCredentials, Sitio, User } from '../types/index';
 
 /**
  * Servicio encargado de las peticiones HTTP relacionadas con la autenticación.

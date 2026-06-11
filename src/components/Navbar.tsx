@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSite } from '../contexts/SiteContext';
 
 const Navbar: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { site } = useSite();
   const { slug } = useParams<{ slug: string }>();
 
