@@ -34,8 +34,7 @@ const PencasList: React.FC = () => {
   };
 
   const handleVerPenca = (pencaInstanciaId: number) => {
-    // Por ahora alertamos, en el futuro irá a la vista de torneo
-    alert(`¡Pronto podrás ver tu penca (ID: ${pencaInstanciaId}) y hacer predicciones!`);
+    navigate(`/${slug}/penca/${pencaInstanciaId}`);
   };
 
   if (loading) {
@@ -65,7 +64,7 @@ const PencasList: React.FC = () => {
           <div>
             <h3 style={{ margin: '0 0 5px 0' }}>{p.nombre}</h3>
             <p className="text-muted" style={{ margin: '0 0 10px 0' }}>Deporte: {p.deporte}</p>
-            <p style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#28a745', marginBottom: '20px' }}>
+            <p style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary-color)', marginBottom: '20px' }}>
               Costo: ${p.costo.toFixed(2)} USD
             </p>
           </div>
@@ -75,7 +74,7 @@ const PencasList: React.FC = () => {
               <button 
                 onClick={() => handleVerPenca(p.id)}
                 className="btn-secondary"
-                style={{ borderColor: '#28a745', color: '#28a745', width: '100%' }}
+                style={{ width: '100%' }}
               >
                 Ver Mi Penca
               </button>
