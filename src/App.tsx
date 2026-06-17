@@ -5,12 +5,11 @@ import Register from './pages/Register';
 import Partidos from './pages/Partidos';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
-import AdminPencas from './pages/AdminPencas';
 import CheckoutPenca from './pages/CheckoutPenca';
+import PencaDashboard from './pages/PencaDashboard';
 import AuthenticatedLayout from './components/AuthenticatedLayout';
 import { useAuth } from './contexts/AuthContext';
 import SlugGuard from './components/SlugGuard';
-import AdminLayout from './components/AdminLayout';
 import './App.css';
 /**
  * Componente auxiliar para manejar la redirección dinámica.
@@ -52,20 +51,19 @@ function App() {
                 path="register" 
                 element={!user ? <Register /> : <SlugRedirect />} 
               />
-              
+
                {/* Rutas Autenticadas con Layout */}
             <Route element={user ? <AuthenticatedLayout /> : <LoginRedirect />}>
               <Route path="" element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
               <Route path="checkout/:pencaInstanciaId" element={<CheckoutPenca />} />
-              <Route path="partidos/:idParticipacion" element={<Partidos />} />
+              <Route path="partidos/:idParticipacion" element={<Partidos />} />    
+              <Route path="penca/:pencaInstanciaId" element={<PencaDashboard />} />
             </Route>
-            <Route element={user ? <AdminLayout /> : <LoginRedirect />}>
-              <Route path="admin/pencas" element={<AdminPencas />} />
-            </Route>
-            
           </Routes>
-        </SlugGuard>
+      
+          </SlugGuard> 
+          
         } 
       />
 

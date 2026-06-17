@@ -36,5 +36,10 @@ export const prediccionService = {
   tendenciaPredicciones: async(partidoId : number) => {
     const response = await api.get(`predicciones/tendencia?partidoId=${partidoId}`);
     return response.data;
+  },
+
+  getIdParticipacion: async(pencaInstanciaId : number) => {
+    const response = await api.get(`predicciones/participaciones/mia?pencaInstanciaId=${pencaInstanciaId}`);
+    return response.data;
   }
 };

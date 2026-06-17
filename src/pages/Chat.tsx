@@ -43,6 +43,7 @@ export default function Chat({participacionId} : ChatProps) {
     setMensajes(msgs);
   });
   connection.on('RecibirMensaje', (msg: Mensaje) => {
+      console.log('mensaje recibido:', msg);
     setMensajes(prev => [...prev, msg]);
   });
 
@@ -70,8 +71,7 @@ export default function Chat({participacionId} : ChatProps) {
 
 const agruparPorDia = (mensajes: Mensaje[]) => {
   return mensajes.reduce((acc, msg) => {
-    
-    const fechaMsg = new Date(msg.fechaEnvio);
+    const fechaMsg = new Date(msg.fechaEnvio); // ← fix principal
     const hoy = new Date();
     const ayer = new Date();
     ayer.setDate(hoy.getDate() - 1);
@@ -83,8 +83,7 @@ const agruparPorDia = (mensajes: Mensaje[]) => {
       ? 'Hoy'
       : esAyer
       ? 'Ayer'
-      : fechaMsg.toLocaleDateString('es-UY', { day: 'numeric', month: 'long', year: 'numeric' });
-
+      : fechaMsg.toLocaleDateString('es-UY', { day: 'numeric', month: 'long'});
 
     if (!acc[fecha]) acc[fecha] = [];
     acc[fecha].push(msg);
@@ -122,14 +121,14 @@ return (
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                borderBottom: '2px solid #2563eb'
+                borderBottom: '2px solid var(--primary-color)'
             }}
         >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 16 }}></span>
                 <span style={{ color: '#111827', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: 1 }}>Chat del grupo</span>
             </div>
-            <span style={{ color: '#2563eb', fontSize: 11, fontWeight: 700 }}>{abierto ? '▲' : '▼'}</span>
+            <span style={{ color: 'var(--primary-color)', fontSize: 11, fontWeight: 700 }}>{abierto ? '▲' : '▼'}</span>
         </div>
 
         {abierto && <>
@@ -160,12 +159,12 @@ return (
                         marginBottom: 10
                         }}>
                         {!esMio && (
-                            <span style={{ fontSize: 11, color: '#2563eb', marginBottom: 3, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                            <span style={{ fontSize: 11, color: 'var(--primary-color)', marginBottom: 3, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                             {m.nombre}
                             </span>
                         )}
                         <div style={{
-                            background: esMio ? '#2563eb' : '#fff',
+                            background: esMio ? 'var(--primary-color)' : '#fff',
                             color: esMio ? '#fff' : '#111827',
                             padding: '7px 12px',
                             borderRadius: esMio ? '12px 12px 4px 12px' : '12px 12px 12px 4px',
@@ -217,7 +216,7 @@ return (
                 <button
                     onClick={enviar}
                     style={{
-                        background: '#2563eb',
+                        background: 'var(--primary-color)',
                         color: '#fff',
                         border: 'none',
                         borderRadius: 8,

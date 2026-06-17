@@ -1,5 +1,5 @@
 import api from './api';
-import type { AuthResponse, LoginCredentials, RegisterCredentials, Sitio } from '../types/index';
+import type { AuthResponse, LoginCredentials, RegisterCredentials, Sitio, User } from '../types/index';
 
 /**
  * Servicio encargado de las peticiones HTTP relacionadas con la autenticación.
@@ -52,6 +52,27 @@ export const authService = {
     } catch {
       return false; // Ante cualquier error, asumimos inválido para máxima seguridad
     }
+  },
+
+  /**
+   * Vincula una cuenta de Google a un usuario de autenticación tradicional
+   */
+  linkGoogle: async (token: string, slug: string) => {
+    // La petición viaja con el JWT local en el header gracias al interceptor de Axios
+    const response = await api.post('/auth/link-google', {
+      Auth0Token: token,
+      SitioId: 0,
+      Slug: slug
+    });
+    return response.data;
+  },
+
+  /**
+   * Obtiene los datos del perfil actual del usuario autenticado
+   */
+  fetchMe: async (slug: string) => {
+    const response = await api.get<User>(`/user/me?slug=${slug}`);
+    return response.data;
   }
 
 };

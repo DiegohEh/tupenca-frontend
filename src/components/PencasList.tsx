@@ -32,10 +32,9 @@ const PencasList: React.FC = () => {
   const handleParticipar = (pencaInstanciaId: number) => {
     navigate(`/${slug}/checkout/${pencaInstanciaId}`);
   };
-
-  const handleVerPenca = (participacionId: number) => {
-    // Por ahora alertamos, en el futuro irá a la vista de torneo
-        navigate(`/${slug}/partidos/${participacionId}`)
+  
+  const handleVerPenca = (pencaInstanciaId: number, participacionId: number, pencaNombre: string) => {
+      navigate(`/${slug}/penca/${pencaInstanciaId}`, { state: { participacionId, pencaNombre} });
   };
 
   if (loading) {
@@ -65,7 +64,7 @@ const PencasList: React.FC = () => {
           <div>
             <h3 style={{ margin: '0 0 5px 0' }}>{p.nombre}</h3>
             <p className="text-muted" style={{ margin: '0 0 10px 0' }}>Deporte: {p.deporte}</p>
-            <p style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#28a745', marginBottom: '20px' }}>
+            <p style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary-color)', marginBottom: '20px' }}>
               Costo: ${p.costo.toFixed(2)} USD
             </p>
           </div>
@@ -73,9 +72,9 @@ const PencasList: React.FC = () => {
           <div>
             {p.yaParticipa ? (
               <button 
-                onClick={() => handleVerPenca(p.idParticipacion)}
+                onClick={() => handleVerPenca(p.id, p.idParticipacion, p.nombre)}
                 className="btn-secondary"
-                style={{ borderColor: '#28a745', color: '#28a745', width: '100%' }}
+                style={{ width: '100%' }}
               >
                 Ver Mi Penca
               </button>

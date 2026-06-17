@@ -8,6 +8,7 @@ export interface PencaAPI {
   costo: number;
   yaParticipa: boolean;
   idParticipacion: number;
+
 }
 
 export const pencasService = {

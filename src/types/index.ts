@@ -9,7 +9,15 @@ export interface User {
   email: string;
   sitioId: number;
   tienePassword: boolean;
-  rol: number;
+  tieneGoogle: boolean;
+  avatarUrl?: string;
+}
+
+export interface PreferenciasNotificacionDTO {
+  recibirResultados: boolean;
+  recibirPartidos: boolean;
+  recibirGenerales: boolean;
+  recibirRanking: boolean;
 }
 
 export interface AuthResponse {

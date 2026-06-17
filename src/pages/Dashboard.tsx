@@ -10,15 +10,17 @@ const Dashboard: React.FC = () => {
   return (
     <div>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <h1 style={{ marginBottom: '10px' }}>Bienvenido a {site?.nombre || 'la plataforma'}</h1>
+        <h1 style={{ marginBottom: '10px' }}>
+          Bienvenido a <span style={{ color: 'var(--primary-color)' }}>{site?.nombre || 'la plataforma'}</span>
+        </h1>
         <p className="text-muted">Hola {user?.nombre}, selecciona una penca para participar o ver resultados.</p>
       </div>
 
-      {/* Aquí irán las Pencas más adelante */}
       <div className="container-simple" style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
         <h2 style={{ fontSize: '24px', marginBottom: '15px' }}>Pencas Disponibles</h2>
         <PencasList />
       </div>
+
     </div>
   );
 };
