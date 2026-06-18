@@ -27,7 +27,7 @@ export default function Chat({participacionId} : ChatProps) {
   const token = localStorage.getItem(`authToken_${slug}`) ?? '';
 
   const connection = new signalR.HubConnectionBuilder()
-    .withUrl(`${import.meta.env.VITE_HUB_URL}/hubs/chat`, {
+    .withUrl(`${import.meta.env.VITE_HUB_URL}/chat`, {
       accessTokenFactory: () => token
     })
     .withAutomaticReconnect()
@@ -53,7 +53,12 @@ export default function Chat({participacionId} : ChatProps) {
     await connection.invoke('HistorialMensajes');
   })
   .catch(err => {
-    console.error("Error al iniciar conexión:", err);
+    if (err.name === 'AbortError' || err.message?.includes('stopped during negotiation')) {
+        // Ignorar error de React Strict Mode al desmontar rápido
+        console.log("Conexión de Chat abortada (Strict Mode)");
+    } else {
+        console.error("Error al iniciar conexión:", err);
+    }
   });
 
   connectionRef.current = connection;
