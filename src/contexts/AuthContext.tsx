@@ -169,9 +169,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const logout = () => {
-        if (currentSlug) {
-            localStorage.setItem('lastSlug', currentSlug);
-        }
 
         clearLocalAuth();
 
@@ -210,7 +207,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 register,
                 logout,
                 updateLocalUser,
-                loading: loading || isAuth0Loading
+                loading: loading || (isAuth0Loading && !user)
             }}
         >
             {children}
