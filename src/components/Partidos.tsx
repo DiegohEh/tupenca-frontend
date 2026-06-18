@@ -32,7 +32,7 @@ const Partidos: React.FC<PartidosProps> = ({ slug, pencaInstanciaId, participaci
 
     const modalBloqueado =
         partidoSeleccionado?.jugado ||
-        new Date((partidoSeleccionado?.fecha ?? '') + 'Z') <= new Date();
+        new Date((partidoSeleccionado?.fecha ?? '') + '-03:00') <= new Date();
 
     const cargarPartidos = useCallback(async () => {
         try {
@@ -65,12 +65,12 @@ const Partidos: React.FC<PartidosProps> = ({ slug, pencaInstanciaId, participaci
 
     const agruparPorFecha = (lista: PartidoAPI[], descendente = false) => {
         const sorted = [...lista].sort((a, b) => {
-            const diff = new Date(a.fecha).getTime() - new Date(b.fecha).getTime();
+            const diff = new Date(a.fecha + '-03:00').getTime() - new Date(b.fecha + '-03:00').getTime();
             return descendente ? -diff : diff;
         });
 
         return sorted.reduce((acc, partido) => {
-            const fechaPartido = new Date(partido.fecha + 'Z');
+            const fechaPartido = new Date(partido.fecha + '-03:00');
             const hoy = new Date();
             const manana = new Date();
             manana.setDate(hoy.getDate() + 1);
@@ -280,9 +280,9 @@ const Partidos: React.FC<PartidosProps> = ({ slug, pencaInstanciaId, participaci
 
                         <div className="partidos-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12, width: '100%' }}>
                             {(ps as PartidoAPI[]).map((partido, index) => {
-                                const empezado = new Date(partido.fecha + 'Z') <= new Date();
+                                const empezado = new Date(partido.fecha + '-03:00') <= new Date();
                                 const bloqueado = partido.jugado || empezado;
-                                const fecha = new Date(partido.fecha + 'Z');
+                                const fecha = new Date(partido.fecha + '-03:00');
                                 const esUltimoImpar = ps.length % 2 === 1 && index === ps.length - 1;
 
                                 const fechaStr = fecha.toLocaleDateString('es-UY', { weekday: 'short', day: '2-digit', month: 'short' })
