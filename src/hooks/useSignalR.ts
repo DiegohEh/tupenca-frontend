@@ -51,9 +51,13 @@ export const useSignalR = (
         // 5. Cleanup: Cuando el usuario se va de la página, nos desconectamos
         return () => {
             if (connection) {
-                connection.invoke("LeavePencaGroup", pencaInstanciaId.toString())
-                    .then(() => connection.stop())
-                    .catch(e => console.error(e));
+                if (connection.state === signalR.HubConnectionState.Connected) {
+                    connection.invoke("LeavePencaGroup", pencaInstanciaId.toString())
+                        .then(() => connection.stop())
+                        .catch(e => console.error(e));
+                } else {
+                    connection.stop();
+                }
             }
         };
     }, [pencaInstanciaId, onPencaUpdated]); // Se vuelve a ejecutar si cambia la penca

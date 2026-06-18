@@ -61,7 +61,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ pencaInstanciaId, refreshTrig
                     Aún no hay participantes en esta penca.
                 </p>
             ) : (
-                posiciones.map((participante, idx) => {
+                posiciones.map((participante) => {
                     const esPodio = participante.posicion <= 3;
                     const medalColor = participante.posicion === 1
                         ? '#f59e0b'   // oro

@@ -2,7 +2,6 @@ import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Partidos from './pages/Partidos';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
 import CheckoutPenca from './pages/CheckoutPenca';
@@ -57,7 +56,6 @@ function App() {
               <Route path="" element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
               <Route path="checkout/:pencaInstanciaId" element={<CheckoutPenca />} />
-              <Route path="partidos/:idParticipacion" element={<Partidos />} />    
               <Route path="penca/:pencaInstanciaId" element={<PencaDashboard />} />
             </Route>
           </Routes>
