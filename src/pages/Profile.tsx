@@ -144,9 +144,13 @@ const Profile: React.FC = () => {
       const token = await getAccessTokenSilently();
       await authService.linkGoogle(token, slug!);
       setMessage({ type: 'success', text: 'Cuenta de Google vinculada exitosamente.' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       updateLocalUser({ tieneGoogle: true });
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.response?.data?.mensaje || 'Error al vincular cuenta de Google.' });
+      console.error("Error capturado en handleLinkGoogle:", error);
+      console.log("Respuesta del backend:", error.response?.data);
+      setMessage({ type: 'error', text: error.response?.data?.mensaje || 'Error al vincular cuenta de Google. Revisa la consola para más detalles.' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setLoading(false);
     }
@@ -339,13 +343,26 @@ const Profile: React.FC = () => {
         <div>
           <h3>Métodos de Autenticación</h3>
           <p className="text-muted mb-4">Estos son los métodos que tienes configurados para iniciar sesión.</p>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
-            <span style={{ padding: '5px 10px', borderRadius: '4px', backgroundColor: user.tienePassword ? '#d4edda' : '#e2e3e5', color: user.tienePassword ? '#155724' : '#6c757d', fontWeight: 'bold' }}>
-              {user.tienePassword ? '✅ Correo y Contraseña' : '❌ Correo y Contraseña'}
-            </span>
-            <span style={{ padding: '5px 10px', borderRadius: '4px', backgroundColor: user.tieneGoogle ? '#d4edda' : '#e2e3e5', color: user.tieneGoogle ? '#155724' : '#6c757d', fontWeight: 'bold' }}>
-              {user.tieneGoogle ? '✅ Google (Auth0)' : '❌ Google (Auth0)'}
-            </span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '30px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '15px', borderRadius: '8px', border: `1px solid ${user.tienePassword ? '#c3e6cb' : '#dee2e6'}`, backgroundColor: user.tienePassword ? '#f8fff9' : '#f8f9fa' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: user.tienePassword ? '#28a745' : '#6c757d', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>
+                {user.tienePassword ? <i className="bi bi-check-lg"></i> : <i className="bi bi-lock-fill"></i>}
+              </div>
+              <div>
+                <h4 style={{ margin: 0, fontSize: '14px', color: '#333' }}>Correo y Contraseña</h4>
+                <p style={{ margin: 0, fontSize: '12px', color: user.tienePassword ? '#28a745' : '#6c757d', fontWeight: 'bold' }}>{user.tienePassword ? 'Configurado' : 'No configurado'}</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '15px', borderRadius: '8px', border: `1px solid ${user.tieneGoogle ? '#c3e6cb' : '#dee2e6'}`, backgroundColor: user.tieneGoogle ? '#f8fff9' : '#f8f9fa' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: user.tieneGoogle ? '#28a745' : '#6c757d', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>
+                {user.tieneGoogle ? <i className="bi bi-check-lg"></i> : <i className="bi bi-google"></i>}
+              </div>
+              <div>
+                <h4 style={{ margin: 0, fontSize: '14px', color: '#333' }}>Cuenta de Google</h4>
+                <p style={{ margin: 0, fontSize: '12px', color: user.tieneGoogle ? '#28a745' : '#6c757d', fontWeight: 'bold' }}>{user.tieneGoogle ? 'Vinculada' : 'No vinculada'}</p>
+              </div>
+            </div>
           </div>
 
           <h3>Contraseña</h3>
