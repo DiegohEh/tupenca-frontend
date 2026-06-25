@@ -67,6 +67,39 @@ const Login: React.FC = () => {
       <div>
         <p className="text-muted mb-4">Inicia sesión para jugar</p>
         
+        {error && (
+          <div style={{
+            backgroundColor: '#fee2e2',
+            color: '#b91c1c',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            border: '1px solid #f87171',
+            fontSize: '14px',
+            marginBottom: '20px',
+            textAlign: 'left',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '10px',
+            fontWeight: '500'
+          }}>
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0, marginTop: '2px' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span style={{ flex: 1 }}>{error}</span>
+            <button 
+              type="button"
+              onClick={() => setError('')} 
+              style={{ background: 'transparent', border: 'none', color: '#b91c1c', cursor: 'pointer', padding: '0', display: 'flex', marginTop: '2px', opacity: 0.8 }}
+              aria-label="Cerrar alerta"
+              title="Cerrar"
+            >
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
+
         {/* Formulario Tradicional */}
         <form onSubmit={handleLocalLogin} style={{ textAlign: 'left' }}>
           <div className="form-group">
@@ -89,7 +122,6 @@ const Login: React.FC = () => {
               required
             />
           </div>
-          {error && <p style={{ color: 'red', fontSize: '12px', marginTop: '-10px', marginBottom: '10px' }}>{error}</p>}
           <button 
             type="submit" 
             className="btn-primary"

@@ -53,7 +53,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const keySlug = currentSlug ? `_${currentSlug}` : '';
         localStorage.removeItem(`authToken${keySlug}`);
         localStorage.removeItem(`user${keySlug}`);
-        setUser(null);
+        // IMPORTANTE: NO hacemos setUser(null) aquí.
+        // Si lo hacemos, React re-renderiza instantáneamente la app sin usuario ANTES de
+        // que el navegador logre hacer la redirección (Auth0 o window.location.href),
+        // provocando que se renderice el `<LoginRedirect />` por una fracción de segundo (flicker).
+        // Al mantener el estado en memoria, la pantalla queda "congelada" hasta que el navegador se va.
     }, [currentSlug]);
 
     // Rehidratar o limpiar sesión al cambiar de slug (Navegación)
@@ -81,6 +85,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             // Si navegamos a un slug donde no tenemos sesión, nos deslogueamos visualmente
             setUser(null);
         }
+    }, [currentSlug]);
+
+    // Listener para Bfcache (Botón Atrás) y multiventana.
+    // Garantiza que si el usuario vuelve para atrás en el navegador luego de un logout, 
+    // lo patee inmediatamente a la pantalla de login al detectar que ya no hay token.
+    useEffect(() => {
+        const checkAuth = () => {
+            const keySlug = currentSlug ? `_${currentSlug}` : '';
+            const token = localStorage.getItem(`authToken${keySlug}`);
+            if (!token) {
+                setUser(null);
+            }
+        };
+
+        window.addEventListener('pageshow', checkAuth);
+        window.addEventListener('focus', checkAuth);
+
+        return () => {
+            window.removeEventListener('pageshow', checkAuth);
+            window.removeEventListener('focus', checkAuth);
+        };
     }, [currentSlug]);
 
     const syncAttempted = useRef(false);
@@ -169,7 +194,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const logout = () => {
-
         clearLocalAuth();
 
         // Auth0 requiere que returnTo esté registrada en su panel.
@@ -182,6 +206,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                     returnTo: window.location.origin
                 }
             });
+        } else {
+            window.location.href = '/';
         }
     };
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/api';
 
 interface PublicSite {
@@ -14,8 +14,18 @@ interface PublicSite {
 const LandingPage = () => {
   const [sites, setSites] = useState<PublicSite[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    // Si venimos de un error de Auth0 y tenemos un slug guardado, redirigir al login del sitio para mostrar el error.
+    const errorMsg = sessionStorage.getItem('google_auth_error');
+    const lastSlug = localStorage.getItem('lastSlug');
+    if (errorMsg && lastSlug) {
+      localStorage.removeItem('lastSlug'); // Borramos el rastro instantáneamente
+      navigate(`/${lastSlug}/login`, { replace: true });
+      return;
+    }
+
     const fetchSites = async () => {
       try {
         // Asumiendo que api no incluye /api/sitios por defecto si no es a través de un controller base
