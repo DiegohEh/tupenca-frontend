@@ -77,9 +77,16 @@ Antes de ejecutar el proyecto es necesario tener instalado:
 
 - .NET SDK 10
 - Node.js 22 o superior
+- **PNPM** (Gestor de paquetes requerido. El proyecto bloquea `npm install` por seguridad).
 - SQL Server
 - Visual Studio 2022 / Visual Studio Code
 - Git
+
+*Nota sobre PNPM:* Se recomienda instalarlo mediante Corepack (incluido en Node.js):
+```bash
+corepack enable
+corepack prepare pnpm@latest --activate
+```
 
 ---
 
@@ -117,25 +124,35 @@ cd <Repositorio>
 ### Instalar dependencias
 
 ```bash
-npm install
+pnpm install
 ```
 
-### Configurar variables
+### Configurar variables de entorno
 
-Crear un archivo:
+Vite requiere que las variables personalizadas del frontend tengan el prefijo `VITE_`.
 
-```
-.env
-```
+1. **Variables Base (`.env`)**: Contiene la configuración genérica/local (se sube al repositorio):
+   ```env
+   VITE_API_URL=https://localhost:53276/api
+   VITE_HUB_URL=https://localhost:53276/hubs
+   ```
 
-con las variables correspondientes del backend y Auth0.
+2. **Variables Secretas (`.env.local`)**: Debes crear este archivo (ignorado por Git) para almacenar tus credenciales privadas, por ejemplo:
+   ```env
+   VITE_PAYPAL_CLIENT_ID=tu_client_id_aqui
+   ```
 
-### Ejecutar
+### Ejecutar en Desarrollo
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
-- ...
+### Compilar para Producción (Opcional)
+
+Para verificar estrictamente los tipos de TypeScript antes de desplegar (ej. en Vercel):
+```bash
+pnpm build
+```
 
 Tecnólogo en Informática – TSI.NET 2026
