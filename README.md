@@ -1,73 +1,141 @@
-# React + TypeScript + Vite
+# tupenca.uy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción
 
-Currently, two official plugins are available:
+**tupenca.uy** es una plataforma web y móvil para la administración de pencas deportivas bajo una arquitectura **multi-tenant**, permitiendo que múltiples organizaciones administren sus propias instancias de forma independiente.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Cada sitio cuenta con su propia configuración, usuarios, pencas, premios y personalización visual, manteniendo el aislamiento de la información entre organizaciones.
 
-## React Compiler
+El sistema fue desarrollado como proyecto obligatorio de la asignatura **TSI.NET 2026**.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Funcionalidades principales
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Gestión de múltiples sitios (Multi-tenancy).
+- Autenticación mediante credenciales internas y Google (Auth0).
+- Administración de pencas deportivas.
+- Predicciones de resultados.
+- Tabla de posiciones automática.
+- Integración con API-Football.
+- Actualización automática de resultados.
+- Pagos mediante PayPal.
+- Chat en tiempo real.
+- Notificaciones Push mediante Firebase.
+- Aplicación Web.
+- Aplicación Mobile.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Arquitectura
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+El proyecto está dividido en tres repositorios:
+
+| Repositorio | Descripción |
+|-------------|-------------|
+| Backend | API REST + Panel de Administración desarrollado en ASP.NET Core MVC |
+| Frontend | Aplicación Web desarrollada con React + TypeScript |
+| Mobile | Aplicación Android desarrollada con .NET MAUI |
+
+---
+
+## Tecnologías utilizadas
+
+### Backend
+
+- ASP.NET Core 10
+- Entity Framework Core
+- SQL Server
+- JWT
+- SignalR
+
+### Frontend
+
+- React
+- TypeScript
+- Vite
+- Axios
+
+### Mobile
+
+- .NET MAUI
+- CommunityToolkit.Mvvm
+
+### Servicios externos
+
+- Auth0
+- API-Football
+- Firebase Cloud Messaging
+- Cloudinary
+- PayPal
+
+---
+
+## Requisitos
+
+Antes de ejecutar el proyecto es necesario tener instalado:
+
+- .NET SDK 10
+- Node.js 22 o superior
+- SQL Server
+- Visual Studio 2022 / Visual Studio Code
+- Git
+
+---
+
+## Variables de configuración
+
+El proyecto requiere configurar distintas credenciales de servicios externos, entre ellas:
+
+- SQL Server
+- Auth0
+- API-Football
+- Firebase
+- Cloudinary
+- PayPal
+
+Las mismas deben configurarse en los archivos de configuración correspondientes antes de ejecutar la aplicación.
+
+---
+
+## Instalación
+
+Clonar el repositorio:
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Entrar al proyecto:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd <Repositorio>
 ```
+
+## Ejecución del Frontend
+
+### Instalar dependencias
+
+```bash
+npm install
+```
+
+### Configurar variables
+
+Crear un archivo:
+
+```
+.env
+```
+
+con las variables correspondientes del backend y Auth0.
+
+### Ejecutar
+
+```bash
+npm run dev
+```
+
+- ...
+
+Tecnólogo en Informática – TSI.NET 2026
